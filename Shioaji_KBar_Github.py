@@ -133,9 +133,6 @@ def calculate_rsi(df, period):
     loss = np.where(delta < 0, -delta, 0)
     loss = np.convolve(loss, np.ones((period,))/period, mode='valid')
 
-    # 避免除以0的情況
-    loss[loss == 0] = np.nan
-
     # 計算相對強弱指數（RS）
     rs = gain / loss
 
