@@ -119,19 +119,18 @@ KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
 
 
 
-def calculate_rsi(df, period=14):
+def calculate_rsi(df, timeperiod):
     delta = df['close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    gain = (delta.where(delta > 0, 0)).rolling(window=timeperiod).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=timeperiod).mean()
 
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
 
     return rsi
 # # 計算 RSI指標長短線
-KBar_df['RSI_long'] = calculate_rsi(KBar_dic,timeperiod=LongRSIPeriod)
-KBar_df['RSI_short'] = calculate_rsi(KBar_dic,timeperiod=ShortRSIPeriod)
-
+KBar_df['RSI_long'] = calculate_rsi(KBar_dic,LongRSIPeriod)
+KBar_df['RSI_short'] = calculate_rsi(KBar_dic,ShortRSIPeriod)
 
 ## 尋找最後 NAN值的位置
 last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].apply(pd.isna)][0]
