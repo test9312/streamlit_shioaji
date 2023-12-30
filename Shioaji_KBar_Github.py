@@ -123,7 +123,7 @@ import numpy as np
 
 import numpy as np
 
-def calculate_rsi(df, period=14):
+def calculate_rsi(df, period):
     # 計算每日價格變動
     delta = np.diff(df['close'])
 
