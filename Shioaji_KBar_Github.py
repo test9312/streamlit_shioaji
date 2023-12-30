@@ -121,9 +121,9 @@ KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
 
 import numpy as np
 
-def calculate_rsi(close_prices, period):
+def calculate_rsi(df, period):
     # 計算每日價格變動
-    delta = np.diff(close_prices)
+    delta = np.diff(df['close'])
 
     # 計算正價格變動的平均值（gain）
     gain = np.where(delta > 0, delta, 0)
