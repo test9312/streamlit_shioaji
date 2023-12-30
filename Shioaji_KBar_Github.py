@@ -120,7 +120,7 @@ KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
 
 
 def calculate_rsi(df, timeperiod):
-    delta = df['close'].diff()
+    delta = np.diff(df['close'])
     gain = (delta.where(delta > 0, 0)).rolling(window=timeperiod).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=timeperiod).mean()
 
