@@ -182,7 +182,7 @@ def calculate_bollinger_bands(KBar_dic, period, num_std_dev):
     return df
 
 bollinger_bands = calculate_bollinger_bands(KBar_dic,bollinger_bandsPeriod,num_std_dev)
-KBar_df[['SMA', 'upperband', 'lowerband']] = bollinger_bands[:, :3]
+KBar_df[['SMA', 'upper_band', 'lower_band']] = bollinger_bands[:, :3]
 
 
 
@@ -245,14 +245,14 @@ with st.expander("布林通道"):
 
     fig3 = make_subplots(specs=[[{"secondary_y": True}]])
     
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['SMA'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='black', width=2), name='SMA'), 
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=bollinger_bands[:,0][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='black', width=2), name='SMA'), 
                   secondary_y=True)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df[:,13][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name='upperband'), 
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=bollinger_bands[:,1][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name='upperband'), 
                   secondary_y=True)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['lowerband'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='blue', width=2), name='lowerband'), 
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=bollinger_bands[:,2][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='blue', width=2), name='lowerband'), 
                   secondary_y=True)
     
-    fig3.layout.yaxis2.showgrid=True    
+    fig3.layout.yaxis2.showgrid=True
 
     st.plotly_chart(fig3, use_container_width=True)
     
