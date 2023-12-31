@@ -118,11 +118,6 @@ KBar_df['MA_long'] = KBar_df['close'].rolling(window=LongMAPeriod).mean()
 KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
 
 
-
-import numpy as np
-
-import numpy as np
-
 def calculate_rsi(df, period):
     # 計算每日價格變動
     delta = np.diff(df['close'])
@@ -135,17 +130,18 @@ def calculate_rsi(df, period):
     loss = np.where(delta < 0, -delta, 0)
     loss = np.convolve(loss, np.ones((period,))/period, mode='valid')
 
-    # 避免除以0的情況
-    loss[loss == 0] = np.nan
 
     # 計算相對強弱指數（RS）
     rs = gain / loss
 
     # 計算RSI
     rsi = 100 - (100 / (1 + rs))
+    
+    rsi_nan = np.array([np.nan]*period)
+    
+    rsi = np.hstack((rsi_nan, rsi))
 
     return rsi
-
 # # 計算 RSI指標長短線
 KBar_df['RSI_long'] = calculate_rsi(KBar_dic,LongRSIPeriod)
 KBar_df['RSI_short'] = calculate_rsi(KBar_dic,ShortRSIPeriod)
