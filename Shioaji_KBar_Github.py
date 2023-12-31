@@ -103,12 +103,21 @@ st.subheader("設定計算短移動平均線(MA)的 K 棒數目(整數, 例如 2
 ShortMAPeriod=st.slider('選擇一個整數', 0, 100, 2)
 
                 
-st.subheader("設定計算長RSI指標線(整數, 例如 15)")
+st.subheader("設定計算長RSI的 K 棒數目(整數, 例如 15)")
 LongRSIPeriod=st.slider('選擇一個整數', 0, 1000, 15)
 
 
-st.subheader("設定計算短RSI指標線(整數, 例如 8)")
+st.subheader("設定計算短RSI的 K 棒數目(整數, 例如 8)")
 ShortRSIPeriod=st.slider('選擇一個整數', 0, 1000, 8)
+
+st.subheader("設定計算布林通道的 K 棒數目(整數, 例如 20)")
+
+bollinger_bandsPeriod=st.slider('選擇一個整數', 0, 100, 20)
+
+st.subheader("設定計算布林通道的標準差倍數數(整數, 通常為 2)")
+
+num_std_dev=st.slider('選擇一個整數', 0, 10, 2)
+
 
 
 # 將K線 Dictionary 轉換成 Dataframe
@@ -117,7 +126,7 @@ KBar_df = pd.DataFrame(KBar_dic)
 KBar_df['MA_long'] = KBar_df['close'].rolling(window=LongMAPeriod).mean()
 KBar_df['MA_short'] = KBar_df['close'].rolling(window=ShortMAPeriod).mean()
 
-
+#RSI計算函式
 def calculate_rsi(df, period):
     # 計算每日價格變動
     delta = np.diff(df['close'])
@@ -146,9 +155,47 @@ def calculate_rsi(df, period):
 KBar_df['RSI_long'] = calculate_rsi(KBar_dic,LongRSIPeriod)
 KBar_df['RSI_short'] = calculate_rsi(KBar_dic,ShortRSIPeriod)
 
+
+
+
+
+
+
+
+
+
+
+def calculate_bollinger_bands(KBar_dic, period, num_std_dev):
+    close_prices = KBar_dic['close']
+    sma = np.convolve(close_prices, np.ones((period,))/period, mode='valid')
+    std_dev = np.std(np.lib.stride_tricks.sliding_window_view(close_prices, (period,)), axis=1, ddof=0)
+
+    upper_band = sma + (std_dev * num_std_dev)
+    lower_band = sma - (std_dev * num_std_dev)
+
+    df = np.column_stack((sma, upper_band, lower_band))
+    
+    arr_nan = np.full((period-1, 3), np.nan)
+    
+    df = np.concatenate((arr_nan,df), axis=0)
+
+    return df
+
+bollinger_bands = calculate_bollinger_bands(KBar_dic,bollinger_bandsPeriod,num_std_dev)
+KBar_df['SMA'] = bollinger_bands[:,0]
+KBar_df['upper_band'] = bollinger_bands[:,1]
+KBar_df['lower_band'] = bollinger_bands[:,2]
+
+
+
+
+
+
+
 ## 尋找最後 NAN值的位置
 last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].apply(pd.isna)][0]
 last_nan_index_RSI = KBar_df['RSI_long'][::-1].index[KBar_df['RSI_long'][::-1].apply(pd.isna)][0]
+last_nan_index_bollinger_bands = KBar_df['SMA'][::-1].index[KBar_df['SMA'][::-1].apply(pd.isna)][0]
 
 
 
@@ -193,6 +240,24 @@ with st.expander("長短RSI"):
     fig2.layout.yaxis2.showgrid=True    
 
     st.plotly_chart(fig2, use_container_width=True)
+    
+    
+with st.expander("布林通道"):
+    
+    fig3 = make_subplots(specs=[[{"secondary_y": True}]]
+    
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['SMA'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='black', width=2), name=f'{bollinger_bandsPeriod}-根 K棒 SMA'),
+                   secondary_y=True)
+    
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['upper_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name=f'{bollinger_bandsPeriod}-根 K棒 upper_band'),
+                   secondary_y=True)
+    
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['lower_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='blue', width=2), name=f'{bollinger_bandsPeriod}-根 K棒 lower_band'),
+                   secondary_y=True)
+    
+    fig2.layout.yaxis2.showgrid=True    
+
+    st.plotly_chart(fig3, use_container_width=True)
     
     
     
