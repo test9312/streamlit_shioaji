@@ -248,9 +248,9 @@ with st.expander("布林通道"):
     
     fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['SMA'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='black', width=2), name='SMA'), 
                   secondary_y=True)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['upper_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name='upper_band'), 
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['upper_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name='upperband'), 
                   secondary_y=True)
-    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['Lower_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='blue', width=2), name='Lower_band'), 
+    fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=KBar_df['lower_band'][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='blue', width=2), name='lowerband'), 
                   secondary_y=True)
     
     fig3.layout.yaxis2.showgrid=True    
