@@ -182,9 +182,8 @@ def calculate_bollinger_bands(KBar_dic, period, num_std_dev):
     return df
 
 bollinger_bands = calculate_bollinger_bands(KBar_dic,bollinger_bandsPeriod,num_std_dev)
-KBar_df['SMA'] = bollinger_bands[:,0]
-KBar_df['upper_band'] = bollinger_bands[:,1]
-KBar_df['lower_band'] = bollinger_bands[:,2]
+KBar_df[['SMA', 'upper_band', 'lower_band']] = bollinger_bands[:, :3]
+
 
 
 
