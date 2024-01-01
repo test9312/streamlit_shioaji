@@ -118,6 +118,21 @@ st.subheader("設定計算布林通道的標準差倍數數(整數, 通常為 2)
 
 num_std_dev=st.slider('選擇一個整數', 0, 10, 2)
 
+st.subheader("設定計算短期指數移動平均線週期天數(整數, 通常為 12)")
+
+EMA_shortPeriod=st.slider('選擇一個整數', 0, 100, 12)
+
+st.subheader("設定計算長期指數移動平均線週期天數(整數, 通常為 26)")
+
+EMA_longPeriod=st.slider('選擇一個整數', 0, 100, 26)
+
+st.subheader("設定計算信號線週期天數(整數, 通常為 9)")
+
+Signal_LinePeriod=st.slider('選擇一個整數', 0, 100, 9)
+
+
+
+
 
 
 # 將K線 Dictionary 轉換成 Dataframe
@@ -191,10 +206,35 @@ KBar_df[['SMA', 'upper_band', 'lower_band']] = bollinger_bands[:, :3]
 
 
 
+
+close_prices = KBar_dic['close']
+
+# 计算短期（12天）和长期（26天）的指数移动平均值
+EMA_short = np.convolve(close_prices, np.ones(EMA_shortPeriod)/EMA_shortPeriod, mode='valid')
+EMA_long = np.convolve(close_prices, np.ones(EMA_longPeriod)/EMA_longPeriod, mode='valid')
+EMA_long = np.concatenate((np.full(EMA_longPeriod-EMA_shortPeriod, np.nan), EMA_long))
+# 计算差异值（MACD线）
+macd_line = EMA_short - EMA_long
+
+# 计算信号线（9天的指数移动平均值）
+signal_line = np.convolve(macd_line, np.ones(Signal_LinePeriod)/Signal_LinePeriod, mode='valid')
+
+# 计算差异值和信号线的差异（MACD Histogram）
+macd_histogram = macd_line[-len(signal_line):] - signal_line
+
+
+
+
+
+
+
+
+
 ## 尋找最後 NAN值的位置
 last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].apply(pd.isna)][0]
 last_nan_index_RSI = KBar_df['RSI_long'][::-1].index[KBar_df['RSI_long'][::-1].apply(pd.isna)][0]
 last_nan_index_bollinger_bands = KBar_df['SMA'][::-1].index[KBar_df['SMA'][::-1].apply(pd.isna)][0]
+last_nan_MACD = macd_line[::-1].index[macd_line[::-1].apply(pd.isna)][0]
 
 
 
@@ -255,6 +295,22 @@ with st.expander("布林通道"):
     fig3.layout.yaxis2.showgrid=True
 
     st.plotly_chart(fig3, use_container_width=True)
+    
+    
+with st.expander("布林通道"):
+
+    fig4 = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=macd_line[last_nan_MACD+1:], mode='lines',line=dict(color='orange', width=2), name='MACD'), 
+                  secondary_y=True)
+    fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=signal_line[last_nan_MACD+1:], mode='lines',line=dict(color='green', width=2), name='Signal Line'), 
+                  secondary_y=True)
+    fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=macd_histogram[last_nan_MACD+1:], mode='histogram',line=dict(color='gray', width=2), name='MACD Histogram'), 
+                  secondary_y=True)
+    
+    fig4.layout.yaxis2.showgrid=True
+
+    st.plotly_chart(fig4, use_container_width=True)    
     
     
     
