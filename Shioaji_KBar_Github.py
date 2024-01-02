@@ -217,11 +217,11 @@ EMA_long = np.convolve(close_prices, np.ones(EMA_longPeriod)/EMA_longPeriod, mod
 EMA_long = np.concatenate((np.full(EMA_longPeriod-EMA_shortPeriod, np.nan), EMA_long))
 # 计算差异值（MACD线）
 macd_line = EMA_short - EMA_long
-macd_line = np.concatenate((np.full(EMA_longPeriod-1, np.nan), macd_line))
+macd_line = np.concatenate((np.full(EMA_shortPeriod-1, np.nan), macd_line))
 
 # 计算信号线（9天的指数移动平均值）
 signal_line = np.convolve(macd_line, np.ones(Signal_LinePeriod)/Signal_LinePeriod, mode='valid')
-signal_line = np.concatenate((np.full(EMA_shortPeriod+Signal_LinePeriod-2, np.nan), signal_line))
+signal_line = np.concatenate((np.full(Signal_LinePeriod-1, np.nan), signal_line))
 
 # 计算差异值和信号线的差异（MACD Histogram）
 macd_histogram = macd_line[-len(signal_line):] - signal_line
