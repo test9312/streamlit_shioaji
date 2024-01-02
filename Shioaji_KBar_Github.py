@@ -312,7 +312,7 @@ with st.expander("MACD"):
                   secondary_y=True)
     fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=signal_line[last_nan_MACD+1:], mode='lines',line=dict(color='green', width=2), name='Signal Line'), 
                   secondary_y=True)
-    fig4.add_trace(go.Bar(x=KBar_df['Time'][last_nan_MACD+1:], y=macd_histogram[last_nan_MACD+1:], marker=dict(color='gray', width=2), name='MACD Histogram'), 
+    fig4.add_trace(go.Bar(x=KBar_df['Time'][last_nan_MACD+1:], y=macd_histogram[last_nan_MACD+1:], marker=dict(color='gray'), name='MACD Histogram'), 
                   secondary_y=True)
     
     fig4.layout.yaxis2.showgrid=True
