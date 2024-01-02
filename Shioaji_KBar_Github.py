@@ -215,12 +215,14 @@ EMA_long = np.convolve(close_prices, np.ones(EMA_longPeriod)/EMA_longPeriod, mod
 EMA_long = np.concatenate((np.full(EMA_longPeriod-EMA_shortPeriod, np.nan), EMA_long))
 # 计算差异值（MACD线）
 macd_line = EMA_short - EMA_long
-
+macd_line = np.concatenate((np.full(EMA_short-1, np.nan), macd_line))
 # 计算信号线（9天的指数移动平均值）
 signal_line = np.convolve(macd_line, np.ones(Signal_LinePeriod)/Signal_LinePeriod, mode='valid')
 
 # 计算差异值和信号线的差异（MACD Histogram）
 macd_histogram = macd_line[-len(signal_line):] - signal_line
+
+KBar_df['macd_line'] = macd_line
 
 
 
@@ -234,7 +236,7 @@ macd_histogram = macd_line[-len(signal_line):] - signal_line
 last_nan_index_MA = KBar_df['MA_long'][::-1].index[KBar_df['MA_long'][::-1].apply(pd.isna)][0]
 last_nan_index_RSI = KBar_df['RSI_long'][::-1].index[KBar_df['RSI_long'][::-1].apply(pd.isna)][0]
 last_nan_index_bollinger_bands = KBar_df['SMA'][::-1].index[KBar_df['SMA'][::-1].apply(pd.isna)][0]
-last_nan_MACD = macd_line[::-1].index[macd_line[::-1].apply(pd.isna)][0]
+last_nan_MACD = KBar_df['macd_line'][::-1].index[KBar_df['macd_line'][::-1].apply(pd.isna)][0]
 
 
 
@@ -297,7 +299,7 @@ with st.expander("布林通道"):
     st.plotly_chart(fig3, use_container_width=True)
     
     
-with st.expander("布林通道"):
+with st.expander("MACD"):
 
     fig4 = make_subplots(specs=[[{"secondary_y": True}]])
     
