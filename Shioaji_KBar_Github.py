@@ -277,7 +277,12 @@ with st.expander("K線圖與移動平均線"):
 with st.expander("長短RSI"):
 
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
-    
+
+    fig2.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=False)
+
     fig2.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_RSI+1:], y=KBar_df['RSI_long'][last_nan_index_RSI+1:], mode='lines',line=dict(color='blue', width=2), name=f'{LongRSIPeriod}-根 K棒 移動RSI'), 
                   secondary_y=True)
     fig2.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_RSI+1:], y=KBar_df['RSI_short'][last_nan_index_RSI+1:], mode='lines',line=dict(color='green', width=2), name=f'{ShortRSIPeriod}-根 K棒 移動RSI'), 
@@ -291,7 +296,10 @@ with st.expander("長短RSI"):
 with st.expander("布林通道"):
 
     fig3 = make_subplots(specs=[[{"secondary_y": True}]])
-    
+    fig3.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=False)    
     fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=bollinger_bands[:,0][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='black', width=2), name='SMA'), 
                   secondary_y=True)
     fig3.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_index_bollinger_bands+1:], y=bollinger_bands[:,1][last_nan_index_bollinger_bands+1:], mode='lines',line=dict(color='red', width=2), name='upperband'), 
@@ -307,7 +315,12 @@ with st.expander("布林通道"):
 with st.expander("MACD"):
 
     fig4 = make_subplots(specs=[[{"secondary_y": True}]])
-    
+
+    fig4.add_trace(go.Candlestick(x=KBar_df['Time'],
+                    open=KBar_df['Open'], high=KBar_df['High'],
+                    low=KBar_df['Low'], close=KBar_df['Close'], name='K線'),
+                   secondary_y=False)
+
     fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=macd_line[last_nan_MACD+1:], mode='lines',line=dict(color='orange', width=2), name='MACD'), 
                   secondary_y=True)
     fig4.add_trace(go.Scatter(x=KBar_df['Time'][last_nan_MACD+1:], y=signal_line[last_nan_MACD+1:], mode='lines',line=dict(color='green', width=2), name='Signal Line'), 
