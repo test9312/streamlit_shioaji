@@ -291,7 +291,7 @@ with st.expander("K線圖, 長短 RSI"):
     st.plotly_chart(fig2, use_container_width=True)
     
     
-with st.expander("布林通道"):
+with st.expander("K線圖, 布林通道"):
 
     fig3 = make_subplots(specs=[[{"secondary_y": True}]])
     fig3.add_trace(go.Candlestick(x=KBar_df['Time'],
@@ -310,7 +310,7 @@ with st.expander("布林通道"):
     st.plotly_chart(fig3, use_container_width=True)
     
     
-with st.expander("MACD"):
+with st.expander("K線圖, MACD"):
 
     fig4 = make_subplots(specs=[[{"secondary_y": True}]])
 
